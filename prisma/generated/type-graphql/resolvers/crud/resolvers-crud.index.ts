@@ -1,0 +1,9 @@
+export { ClassCrudResolver } from "./Class/ClassCrudResolver";
+export { ExamCrudResolver } from "./Exam/ExamCrudResolver";
+export { ExamRecordCrudResolver } from "./ExamRecord/ExamRecordCrudResolver";
+export { ExaminationPeriodCrudResolver } from "./ExaminationPeriod/ExaminationPeriodCrudResolver";
+export { GradeCrudResolver } from "./Grade/GradeCrudResolver";
+export { ModulCrudResolver } from "./Modul/ModulCrudResolver";
+export { ProfessorCrudResolver } from "./Professor/ProfessorCrudResolver";
+export { StudentCrudResolver } from "./Student/StudentCrudResolver";
+export { SubjectCrudResolver } from "./Subject/SubjectCrudResolver";

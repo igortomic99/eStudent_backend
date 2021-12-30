@@ -1,0 +1,12 @@
+export { AggregateExamRecordArgs } from "./AggregateExamRecordArgs";
+export { CreateExamRecordArgs } from "./CreateExamRecordArgs";
+export { CreateManyExamRecordArgs } from "./CreateManyExamRecordArgs";
+export { DeleteExamRecordArgs } from "./DeleteExamRecordArgs";
+export { DeleteManyExamRecordArgs } from "./DeleteManyExamRecordArgs";
+export { FindFirstExamRecordArgs } from "./FindFirstExamRecordArgs";
+export { FindManyExamRecordArgs } from "./FindManyExamRecordArgs";
+export { FindUniqueExamRecordArgs } from "./FindUniqueExamRecordArgs";
+export { GroupByExamRecordArgs } from "./GroupByExamRecordArgs";
+export { UpdateExamRecordArgs } from "./UpdateExamRecordArgs";
+export { UpdateManyExamRecordArgs } from "./UpdateManyExamRecordArgs";
+export { UpsertExamRecordArgs } from "./UpsertExamRecordArgs";

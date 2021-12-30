@@ -1,0 +1,9 @@
+export { Class } from "./Class";
+export { Exam } from "./Exam";
+export { ExamRecord } from "./ExamRecord";
+export { ExaminationPeriod } from "./ExaminationPeriod";
+export { Grade } from "./Grade";
+export { Modul } from "./Modul";
+export { Professor } from "./Professor";
+export { Student } from "./Student";
+export { Subject } from "./Subject";

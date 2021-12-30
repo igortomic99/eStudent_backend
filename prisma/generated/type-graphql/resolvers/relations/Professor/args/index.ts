@@ -1,0 +1,1 @@
+export { ProfessorSubjectsArgs } from "./ProfessorSubjectsArgs";

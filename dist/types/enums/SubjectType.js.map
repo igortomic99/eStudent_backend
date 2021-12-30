@@ -1,0 +1,1 @@
+{"version":3,"file":"SubjectType.js","sourceRoot":"","sources":["../../../src/types/enums/SubjectType.ts"],"names":[],"mappings":";;;AAAA,+CAAgD;AAEhD,IAAY,WAGT;AAHH,WAAY,WAAW;IACnB,oCAAqB,CAAA;IACrB,oCAAqB,CAAA;AACvB,CAAC,EAHS,WAAW,GAAX,mBAAW,KAAX,mBAAW,QAGpB;AACD,IAAA,+BAAgB,EAAC,WAAW,EAAE;IAC5B,IAAI,EAAE,aAAa;IACnB,WAAW,EAAE,SAAS;CACvB,CAAC,CAAC"}

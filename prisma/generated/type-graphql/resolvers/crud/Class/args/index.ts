@@ -1,0 +1,12 @@
+export { AggregateClassArgs } from "./AggregateClassArgs";
+export { CreateClassArgs } from "./CreateClassArgs";
+export { CreateManyClassArgs } from "./CreateManyClassArgs";
+export { DeleteClassArgs } from "./DeleteClassArgs";
+export { DeleteManyClassArgs } from "./DeleteManyClassArgs";
+export { FindFirstClassArgs } from "./FindFirstClassArgs";
+export { FindManyClassArgs } from "./FindManyClassArgs";
+export { FindUniqueClassArgs } from "./FindUniqueClassArgs";
+export { GroupByClassArgs } from "./GroupByClassArgs";
+export { UpdateClassArgs } from "./UpdateClassArgs";
+export { UpdateManyClassArgs } from "./UpdateManyClassArgs";
+export { UpsertClassArgs } from "./UpsertClassArgs";

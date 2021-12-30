@@ -1,0 +1,1 @@
+export { ExaminationPeriodExamsArgs } from "./ExaminationPeriodExamsArgs";

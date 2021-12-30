@@ -1,0 +1,9 @@
+export { ClassRelationsResolver } from "./Class/ClassRelationsResolver";
+export { ExamRelationsResolver } from "./Exam/ExamRelationsResolver";
+export { ExamRecordRelationsResolver } from "./ExamRecord/ExamRecordRelationsResolver";
+export { ExaminationPeriodRelationsResolver } from "./ExaminationPeriod/ExaminationPeriodRelationsResolver";
+export { GradeRelationsResolver } from "./Grade/GradeRelationsResolver";
+export { ModulRelationsResolver } from "./Modul/ModulRelationsResolver";
+export { ProfessorRelationsResolver } from "./Professor/ProfessorRelationsResolver";
+export { StudentRelationsResolver } from "./Student/StudentRelationsResolver";
+export { SubjectRelationsResolver } from "./Subject/SubjectRelationsResolver";

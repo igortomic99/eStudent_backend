@@ -1,0 +1,12 @@
+export { AggregateModulArgs } from "./AggregateModulArgs";
+export { CreateManyModulArgs } from "./CreateManyModulArgs";
+export { CreateModulArgs } from "./CreateModulArgs";
+export { DeleteManyModulArgs } from "./DeleteManyModulArgs";
+export { DeleteModulArgs } from "./DeleteModulArgs";
+export { FindFirstModulArgs } from "./FindFirstModulArgs";
+export { FindManyModulArgs } from "./FindManyModulArgs";
+export { FindUniqueModulArgs } from "./FindUniqueModulArgs";
+export { GroupByModulArgs } from "./GroupByModulArgs";
+export { UpdateManyModulArgs } from "./UpdateManyModulArgs";
+export { UpdateModulArgs } from "./UpdateModulArgs";
+export { UpsertModulArgs } from "./UpsertModulArgs";

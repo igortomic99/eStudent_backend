@@ -1,0 +1,49 @@
+import * as TypeGraphQL from "type-graphql";
+import * as GraphQLScalars from "graphql-scalars";
+import { Prisma } from "@prisma/client";
+import { DecimalJSScalar } from "../../scalars";
+import { ClassAvgAggregate } from "../outputs/ClassAvgAggregate";
+import { ClassCountAggregate } from "../outputs/ClassCountAggregate";
+import { ClassMaxAggregate } from "../outputs/ClassMaxAggregate";
+import { ClassMinAggregate } from "../outputs/ClassMinAggregate";
+import { ClassSumAggregate } from "../outputs/ClassSumAggregate";
+
+@TypeGraphQL.ObjectType("ClassGroupBy", {
+  isAbstract: true
+})
+export class ClassGroupBy {
+  @TypeGraphQL.Field(_type => String, {
+    nullable: false
+  })
+  id!: string;
+
+  @TypeGraphQL.Field(_type => TypeGraphQL.Int, {
+    nullable: false
+  })
+  classLabel!: number;
+
+  @TypeGraphQL.Field(_type => ClassCountAggregate, {
+    nullable: true
+  })
+  _count!: ClassCountAggregate | null;
+
+  @TypeGraphQL.Field(_type => ClassAvgAggregate, {
+    nullable: true
+  })
+  _avg!: ClassAvgAggregate | null;
+
+  @TypeGraphQL.Field(_type => ClassSumAggregate, {
+    nullable: true
+  })
+  _sum!: ClassSumAggregate | null;
+
+  @TypeGraphQL.Field(_type => ClassMinAggregate, {
+    nullable: true
+  })
+  _min!: ClassMinAggregate | null;
+
+  @TypeGraphQL.Field(_type => ClassMaxAggregate, {
+    nullable: true
+  })
+  _max!: ClassMaxAggregate | null;
+}
