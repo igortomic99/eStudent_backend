@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 
 @InputType()
 export class StudentInput {
@@ -22,10 +22,6 @@ export class StudentInput {
   })
   lastName!: string;
 
-  @Field((_type) => String, {
-    nullable: false,
-  })
-  password!: string;
 
   @Field((_type) => String, {
     nullable: false,
@@ -42,13 +38,13 @@ export class StudentInput {
   })
   birthDate!: Date;
 
-  @Field(_type => String, {
-    nullable: false
+  @Field((_type) => String, {
+    nullable: false,
   })
-  modulID!: string;
+  moduleName!: string;
 
-  @Field(_type => String, {
-    nullable: false
+  @Field((_type) => Int, {
+    nullable: false,
   })
-  classID!: string;
+  classNumber!: number;
 }

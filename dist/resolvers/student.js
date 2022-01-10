@@ -43,7 +43,23 @@ let StudentResolver = class StudentResolver {
     createStudent(input) {
         return __awaiter(this, void 0, void 0, function* () {
             let student;
-            const hashedPassword = yield argon2_1.default.hash(input.password);
+            const hashedPassword = yield argon2_1.default.hash(input.firstName.concat(input.lastName));
+            const module = yield prisma.modul.findUnique({
+                where: {
+                    moduleName: input.moduleName,
+                },
+            });
+            const klasa = yield prisma.class.findFirst({
+                where: {
+                    classLabel: input.classNumber,
+                },
+            });
+            if (!module) {
+                throw new Error("ER201");
+            }
+            if (!klasa) {
+                throw new Error("ER301");
+            }
             try {
                 student = yield prisma.student.create({
                     data: {
@@ -55,13 +71,14 @@ let StudentResolver = class StudentResolver {
                         brind: input.brind,
                         middleName: input.middleName,
                         jmbg: input.jmbg,
-                        modulID: input.modulID,
-                        classID: input.classID,
+                        modulID: module.id,
+                        classID: klasa.id,
                     },
                 });
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("ER100");
             }
             return student;
         });
@@ -82,7 +99,7 @@ let StudentResolver = class StudentResolver {
                     data: {
                         studentID: req.session.studentID,
                         singed: true,
-                        examID
+                        examID,
                     },
                 });
             }
@@ -113,7 +130,7 @@ let StudentResolver = class StudentResolver {
                 },
             });
             if (!avg) {
-                throw new Error("Average grade cannot be calculated");
+                throw new Error("ER103");
             }
             return avg._avg.value;
         });
@@ -134,6 +151,9 @@ let StudentResolver = class StudentResolver {
                     },
                 },
             });
+            if (!sum) {
+                throw new Error("ER104");
+            }
             return sum._sum.espp;
         });
     }
@@ -145,11 +165,11 @@ let StudentResolver = class StudentResolver {
                 },
             });
             if (!student) {
-                throw new Error("There is no such student");
+                throw new Error("ER001");
             }
             const valid = yield argon2_1.default.verify(student.password, password);
             if (!valid) {
-                throw new Error("Wrong credentials");
+                throw new Error("ER001");
             }
             req.session.studentID = student.id;
             return student;
@@ -173,7 +193,7 @@ let StudentResolver = class StudentResolver {
             const student = yield prisma.student.findUnique({
                 where: {
                     id: studentID,
-                }
+                },
             });
             return student;
         });
@@ -187,6 +207,9 @@ let StudentResolver = class StudentResolver {
                     },
                 },
             });
+            if (!students) {
+                throw new Error("ER101");
+            }
             return students;
         });
     }
@@ -231,6 +254,9 @@ let StudentResolver = class StudentResolver {
                     singed: false,
                 },
             });
+            if (!exams) {
+                throw new Error("ER105");
+            }
             return exams;
         });
     }
@@ -276,17 +302,17 @@ let StudentResolver = class StudentResolver {
             const result = yield prisma.examRecord.findFirst({
                 where: {
                     examID,
-                    studentID: req.session.studentID
-                }
+                    studentID: req.session.studentID,
+                },
             });
             if (!result) {
-                throw new Error("There is no such exam");
+                throw new Error("ER401");
             }
             try {
                 regexa = yield prisma.examRecord.delete({
                     where: {
-                        id: result === null || result === void 0 ? void 0 : result.id
-                    }
+                        id: result === null || result === void 0 ? void 0 : result.id,
+                    },
                 });
             }
             catch (err) {

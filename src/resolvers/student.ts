@@ -8,7 +8,7 @@ import {
   Mutation,
   Query,
   Resolver,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { MyContext } from "../context";
 import { isAuth } from "../middleware/isAuth";
@@ -29,7 +29,25 @@ export class StudentResolver {
   @Mutation(() => Student)
   async createStudent(@Arg("input", () => StudentInput) input: StudentInput) {
     let student;
-    const hashedPassword = await argon2.hash(input.password);
+    const hashedPassword = await argon2.hash(
+      input.firstName.concat(input.lastName)
+    );
+    const module = await prisma.modul.findUnique({
+      where: {
+        moduleName: input.moduleName,
+      },
+    });
+    const klasa = await prisma.class.findFirst({
+      where: {
+        classLabel: input.classNumber,
+      },
+    });
+    if (!module) {
+      throw new Error("ER201");
+    }
+    if (!klasa) {
+      throw new Error("ER301");
+    }
     try {
       student = await prisma.student.create({
         data: {
@@ -41,21 +59,20 @@ export class StudentResolver {
           brind: input.brind,
           middleName: input.middleName,
           jmbg: input.jmbg,
-          modulID: input.modulID,
-          classID: input.classID,
+          modulID: module.id,
+          classID: klasa.id,
         },
       });
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message); //OBRISI PRE PRODUKCIJE
+      throw new Error("ER100");
     }
     return student;
   }
 
   @Query(() => Boolean)
-  async isLoggedIn(
-    @Ctx() { req }: MyContext
-  ){
-    if(req.session.studentID){
+  async isLoggedIn(@Ctx() { req }: MyContext) {
+    if (req.session.studentID) {
       return true;
     }
     return false;
@@ -73,7 +90,7 @@ export class StudentResolver {
         data: {
           studentID: req.session.studentID,
           singed: true,
-          examID
+          examID,
         },
       });
     } catch (err) {
@@ -103,7 +120,7 @@ export class StudentResolver {
       },
     });
     if (!avg) {
-      throw new Error("Average grade cannot be calculated");
+      throw new Error("ER103");
     }
     return avg._avg.value;
   }
@@ -125,6 +142,9 @@ export class StudentResolver {
         },
       },
     });
+    if (!sum) {
+      throw new Error("ER104");
+    }
     return sum._sum.espp;
   }
 
@@ -141,12 +161,12 @@ export class StudentResolver {
     });
 
     if (!student) {
-      throw new Error("There is no such student");
+      throw new Error("ER001");
     }
 
     const valid = await argon2.verify(student.password, password);
     if (!valid) {
-      throw new Error("Wrong credentials");
+      throw new Error("ER001");
     }
     req.session!.studentID = student.id;
     return student;
@@ -173,7 +193,7 @@ export class StudentResolver {
     const student = await prisma.student.findUnique({
       where: {
         id: studentID,
-      }
+      },
     });
     return student;
   }
@@ -187,6 +207,9 @@ export class StudentResolver {
         },
       },
     });
+    if(!students){
+      throw new Error("ER101")
+    }
     return students;
   }
 
@@ -232,6 +255,9 @@ export class StudentResolver {
         singed: false,
       },
     });
+    if (!exams) {
+      throw new Error("ER105");
+    }
     return exams;
   }
 
@@ -245,7 +271,7 @@ export class StudentResolver {
         passed: false,
       },
       select: {
-        id:true,
+        id: true,
         exam: {
           select: {
             date: true,
@@ -266,38 +292,37 @@ export class StudentResolver {
         },
       },
     });
-    if(exams.length === 0){
-      throw new Error("You dont have any registered exams")
+    if (exams.length === 0) {
+      throw new Error("You dont have any registered exams");
     }
     return exams;
   }
 
-  @Mutation(()=> Boolean)
+  @Mutation(() => Boolean)
   async deregisterExam(
     @Arg("examID", () => String) examID: string,
     @Ctx() { req }: MyContext
-  ){
+  ) {
     let regexa;
     const result = await prisma.examRecord.findFirst({
-      where:{
+      where: {
         examID,
-        studentID:req.session.studentID
-      }
+        studentID: req.session.studentID,
+      },
     });
-    if(!result){
-      throw new Error("There is no such exam")
+    if (!result) {
+      throw new Error("ER401");
     }
     try {
       regexa = await prisma.examRecord.delete({
-        where:{
-          id: result?.id
-        }
-      })
+        where: {
+          id: result?.id,
+        },
+      });
     } catch (err) {
       console.log(err);
       if (err) return false;
     }
     return true;
   }
-
 }

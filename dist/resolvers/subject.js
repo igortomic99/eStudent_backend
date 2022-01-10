@@ -79,6 +79,9 @@ let SubjectResolver = class SubjectResolver {
                     modulID: student === null || student === void 0 ? void 0 : student.modulID
                 }
             });
+            if (!subjects) {
+                throw new Error("ER501");
+            }
             return subjects;
         });
     }

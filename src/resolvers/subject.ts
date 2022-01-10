@@ -63,6 +63,9 @@ export class SubjectResolver {
         modulID:student?.modulID
       }
     })
+    if(!subjects){
+      throw new Error("ER501")
+    }
     return subjects;
   }
 }

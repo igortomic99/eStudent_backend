@@ -42,12 +42,6 @@ __decorate([
         nullable: false,
     }),
     __metadata("design:type", String)
-], StudentInput.prototype, "password", void 0);
-__decorate([
-    (0, type_graphql_1.Field)((_type) => String, {
-        nullable: false,
-    }),
-    __metadata("design:type", String)
 ], StudentInput.prototype, "jmbg", void 0);
 __decorate([
     (0, type_graphql_1.Field)((_type) => String, {
@@ -62,17 +56,17 @@ __decorate([
     __metadata("design:type", Date)
 ], StudentInput.prototype, "birthDate", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(_type => String, {
-        nullable: false
+    (0, type_graphql_1.Field)((_type) => String, {
+        nullable: false,
     }),
     __metadata("design:type", String)
-], StudentInput.prototype, "modulID", void 0);
+], StudentInput.prototype, "moduleName", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(_type => String, {
-        nullable: false
+    (0, type_graphql_1.Field)((_type) => type_graphql_1.Int, {
+        nullable: false,
     }),
-    __metadata("design:type", String)
-], StudentInput.prototype, "classID", void 0);
+    __metadata("design:type", Number)
+], StudentInput.prototype, "classNumber", void 0);
 StudentInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], StudentInput);
