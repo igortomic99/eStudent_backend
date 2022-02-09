@@ -1,6 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { SubjectInput } from "../types/inputs/SubjectInput";
-import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  Ctx,
+  UseMiddleware,
+} from "type-graphql";
 import { Subject } from "../types/Subject";
 import { MyContext } from "../context";
 import { isAuth } from "../middleware/isAuth";
@@ -10,9 +17,8 @@ const prisma = new PrismaClient();
 @Resolver(Subject)
 export class SubjectResolver {
   @Query(() => [Subject])
-  async getAllSubjects() {
-    const subjects = await prisma.subject.findMany();
-    return subjects;
+  async getAllSubjects(): Promise<Subject[] | null> {
+    return await prisma.subject.findMany();
   }
 
   @Mutation(() => Subject)
@@ -29,6 +35,7 @@ export class SubjectResolver {
         },
       });
     } catch (err) {
+      ///ADD ERR CODES
       console.log(err.message);
     }
     return subject;
@@ -37,34 +44,34 @@ export class SubjectResolver {
   @Query(() => [Subject])
   async subjectsForParticularModule(
     @Arg("moduleName", () => String) moduleName: string
-  ) {
-    const subjects = await prisma.subject.findMany({
+  ): Promise<Subject[] | null> {
+    return await prisma.subject.findMany({
       where: {
         modul: {
           moduleName,
         },
       },
     });
-    return subjects;
   }
 
-  @Query(()=>[Subject])
+  @Query(() => [Subject])
   @UseMiddleware(isAuth)
-  async studentsSubjects(
-    @Ctx() { req }: MyContext
-  ){
+  async studentsSubjects(@Ctx() { req }: MyContext): Promise<Subject[]|null> {
+    ///Find student with ID from session then search for subjects with modulID
     const student = await prisma.student.findUnique({
-      where:{
-        id:req.session.studentID
-      }
-    })
+      where: {
+        id: req.session.studentID,
+      },
+    });
+
     const subjects = await prisma.subject.findMany({
-      where:{
-        modulID:student?.modulID
-      }
-    })
-    if(!subjects){
-      throw new Error("ER501")
+      where: {
+        modulID: student?.modulID,
+      },
+    });
+    ///Validate
+    if (!subjects) {
+      throw new Error("ER501");
     }
     return subjects;
   }

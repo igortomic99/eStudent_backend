@@ -32,7 +32,7 @@ const main = async () => {
       ExamResolver,
       ModulResolver,
       ClassResolver,
-      ExaminationPeriodResolver
+      ExaminationPeriodResolver,
     ],
     validate: false,
   });

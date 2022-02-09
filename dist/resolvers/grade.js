@@ -30,8 +30,7 @@ const prisma = new client_1.PrismaClient();
 let GradeResolver = class GradeResolver {
     getAllGrades() {
         return __awaiter(this, void 0, void 0, function* () {
-            const grades = yield prisma.grade.findMany();
-            return grades;
+            return yield prisma.grade.findMany();
         });
     }
     createGrade(input) {
@@ -46,6 +45,7 @@ let GradeResolver = class GradeResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error(" add err codes bro");
             }
             return grade;
         });

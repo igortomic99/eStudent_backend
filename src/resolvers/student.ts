@@ -8,7 +8,7 @@ import {
   Mutation,
   Query,
   Resolver,
-  UseMiddleware,
+  UseMiddleware
 } from "type-graphql";
 import { MyContext } from "../context";
 import { isAuth } from "../middleware/isAuth";
@@ -21,33 +21,45 @@ const prisma = new PrismaClient();
 @Resolver(Student)
 export class StudentResolver {
   @Query(() => [Student])
-  async getAll() {
+  async allStudents(): Promise<Student[]> {
     const students = await prisma.student.findMany();
     return students;
   }
 
   @Mutation(() => Student)
-  async createStudent(@Arg("input", () => StudentInput) input: StudentInput) {
+  async createStudent(
+    @Arg("input", () => StudentInput) input: StudentInput
+  ): Promise<Student | null> {
     let student;
+
+    ///Default password is fisrtname + lastname
     const hashedPassword = await argon2.hash(
       input.firstName.concat(input.lastName)
     );
+
+    ///Finding module from module name
     const module = await prisma.modul.findUnique({
       where: {
         moduleName: input.moduleName,
       },
     });
+
+    ///Finding class from class number
     const klasa = await prisma.class.findFirst({
       where: {
         classLabel: input.classNumber,
       },
     });
+
+    //Checking if module and class exist
     if (!module) {
       throw new Error("ER201");
     }
     if (!klasa) {
       throw new Error("ER301");
     }
+
+    //Creating student
     try {
       student = await prisma.student.create({
         data: {
@@ -67,11 +79,12 @@ export class StudentResolver {
       console.log(err.message); //OBRISI PRE PRODUKCIJE
       throw new Error("ER100");
     }
+
     return student;
   }
 
   @Query(() => Boolean)
-  async isLoggedIn(@Ctx() { req }: MyContext) {
+  async isLoggedIn(@Ctx() { req }: MyContext): Promise<Boolean> {
     if (req.session.studentID) {
       return true;
     }
@@ -83,10 +96,10 @@ export class StudentResolver {
   async registerExam(
     @Arg("examID", () => String) examID: string,
     @Ctx() { req }: MyContext
-  ) {
-    let regexa;
+  ): Promise<Boolean> {
+    let registeredExam;
     try {
-      regexa = await prisma.examRecord.create({
+      registeredExam = await prisma.examRecord.create({
         data: {
           studentID: req.session.studentID,
           singed: true,
@@ -94,7 +107,8 @@ export class StudentResolver {
         },
       });
     } catch (err) {
-      console.log(err);
+      //Add error codes
+      console.log(err); //Delete before production
       if (err) return false;
     }
     return true;
@@ -102,7 +116,8 @@ export class StudentResolver {
 
   @Query(() => Float)
   @UseMiddleware(isAuth)
-  async averageGrade(@Ctx() { req }: MyContext) {
+  async averageGrade(@Ctx() { req }: MyContext): Promise< Number | null > {
+    ///Calculate average grade
     const avg = await prisma.grade.aggregate({
       _avg: {
         value: true,
@@ -119,15 +134,19 @@ export class StudentResolver {
         },
       },
     });
+
+    ///Validation
     if (!avg) {
       throw new Error("ER103");
     }
+
     return avg._avg.value;
   }
 
   @Query(() => Int)
   @UseMiddleware(isAuth)
-  async sumESPP(@Ctx() { req }: MyContext) {
+  async sumESPP(@Ctx() { req }: MyContext): Promise< Number | null > {
+    ///Calculating sum of espp
     const sum = await prisma.subject.aggregate({
       _sum: {
         espp: true,
@@ -142,6 +161,8 @@ export class StudentResolver {
         },
       },
     });
+
+    ///Validation
     if (!sum) {
       throw new Error("ER104");
     }
@@ -154,20 +175,25 @@ export class StudentResolver {
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
   ) {
+    ///Check if student exists
     const student = await prisma.student.findUnique({
       where: {
         brind: brind,
       },
     });
 
+    ///If not throw error
     if (!student) {
       throw new Error("ER001");
     }
 
+    ///Verify password
     const valid = await argon2.verify(student.password, password);
     if (!valid) {
       throw new Error("ER001");
     }
+
+    ///Setting student session
     req.session!.studentID = student.id;
     return student;
   }
@@ -188,18 +214,17 @@ export class StudentResolver {
 
   @Query(() => Student)
   @UseMiddleware(isAuth)
-  async me(@Ctx() { req }: MyContext) {
-    const studentID = req.session.studentID;
-    const student = await prisma.student.findUnique({
+  async me(@Ctx() { req }: MyContext): Promise<Student|null> {
+    return await prisma.student.findUnique({
       where: {
-        id: studentID,
+        id: req.session.studentID
       },
     });
-    return student;
   }
 
   @Query(() => [Student])
-  async studentsForModul(@Arg("moduleName", () => String) moduleName: string) {
+  async studentsForModul(@Arg("moduleName", () => String) moduleName: string):Promise<Student[] | null> {
+    ///Finding student from particular module
     const students = await prisma.student.findMany({
       where: {
         modul: {
@@ -207,15 +232,18 @@ export class StudentResolver {
         },
       },
     });
-    if(!students){
-      throw new Error("ER101")
+
+    ///Validation
+    if (!students) {
+      throw new Error("ER101");
     }
     return students;
   }
 
   @Query(() => [ExamRecord])
   @UseMiddleware(isAuth)
-  async passedExams(@Ctx() { req }: MyContext) {
+  async passedExams(@Ctx() { req }: MyContext){
+    ///Passed exams for particular student
     const exams = await prisma.examRecord.findMany({
       select: {
         exam: {
@@ -255,6 +283,8 @@ export class StudentResolver {
         singed: false,
       },
     });
+
+    ///Validate
     if (!exams) {
       throw new Error("ER105");
     }
@@ -264,6 +294,7 @@ export class StudentResolver {
   @Query(() => [ExamRecord])
   @UseMiddleware(isAuth)
   async registeredExams(@Ctx() { req }: MyContext) {
+    ///Registered exams for particular student
     const exams = await prisma.examRecord.findMany({
       where: {
         studentID: req.session.studentID,
@@ -292,6 +323,8 @@ export class StudentResolver {
         },
       },
     });
+    ///Validate 
+    ///Create error code fore this particular situation
     if (exams.length === 0) {
       throw new Error("You dont have any registered exams");
     }
@@ -303,7 +336,9 @@ export class StudentResolver {
     @Arg("examID", () => String) examID: string,
     @Ctx() { req }: MyContext
   ) {
-    let regexa;
+    let registeredExam;
+
+    ///Check if exam  is registered
     const result = await prisma.examRecord.findFirst({
       where: {
         examID,
@@ -313,13 +348,15 @@ export class StudentResolver {
     if (!result) {
       throw new Error("ER401");
     }
+
     try {
-      regexa = await prisma.examRecord.delete({
+      registeredExam = await prisma.examRecord.delete({
         where: {
           id: result?.id,
         },
       });
     } catch (err) {
+      ///ADD ERRR CODES
       console.log(err);
       if (err) return false;
     }

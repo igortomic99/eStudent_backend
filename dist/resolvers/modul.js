@@ -31,8 +31,7 @@ const prisma = new client_1.PrismaClient();
 let ModulResolver = class ModulResolver {
     getAllModuls() {
         return __awaiter(this, void 0, void 0, function* () {
-            const modules = yield prisma.exam.findMany();
-            return modules;
+            return yield prisma.modul.findMany();
         });
     }
     createModul(input) {
@@ -48,18 +47,18 @@ let ModulResolver = class ModulResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("Add err codes bro");
             }
             return modul;
         });
     }
-    moduleSubjects(id) {
+    modulSubjects(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const subjects = yield prisma.subject.findMany({
+            return yield prisma.subject.findMany({
                 where: {
-                    modulID: id
-                }
+                    modulID: id,
+                },
             });
-            return subjects;
         });
     }
 };
@@ -82,7 +81,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], ModulResolver.prototype, "moduleSubjects", null);
+], ModulResolver.prototype, "modulSubjects", null);
 ModulResolver = __decorate([
     (0, type_graphql_1.Resolver)(Modul_1.Modul)
 ], ModulResolver);

@@ -23,45 +23,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamResolver = void 0;
 const client_1 = require("@prisma/client");
-const Exam_1 = require("../types/Exam");
 const type_graphql_1 = require("type-graphql");
+const Exam_1 = require("../types/Exam");
 const ExamRecord_1 = require("../types/ExamRecord");
 const prisma = new client_1.PrismaClient();
 let ExamResolver = class ExamResolver {
     getAllExams() {
         return __awaiter(this, void 0, void 0, function* () {
-            const exams = yield prisma.exam.findMany();
-            return exams;
+            return yield prisma.examRecord.findMany({});
         });
     }
     ExamRecordFromId(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const exam = yield prisma.examRecord.findUnique({
+            return yield prisma.examRecord.findUnique({
                 where: {
-                    id
+                    id,
                 },
                 include: {
                     student: true,
                     exam: {
                         include: {
-                            subject: true
-                        }
-                    }
-                }
+                            subject: true,
+                        },
+                    },
+                },
             });
-            return exam;
         });
     }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => [Exam_1.Exam]),
+    (0, type_graphql_1.Query)(() => [ExamRecord_1.ExamRecord]),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ExamResolver.prototype, "getAllExams", null);
 __decorate([
     (0, type_graphql_1.Query)(() => ExamRecord_1.ExamRecord),
-    __param(0, (0, type_graphql_1.Arg)('id', () => String)),
+    __param(0, (0, type_graphql_1.Arg)("id", () => String)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

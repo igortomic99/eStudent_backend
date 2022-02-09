@@ -1,5 +1,4 @@
 import { InputType, Field } from "type-graphql";
-import { Student } from "../Student";
 
 @InputType()
 export class ExamInput {

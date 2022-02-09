@@ -31,8 +31,7 @@ const prisma = new client_1.PrismaClient();
 let SubjectResolver = class SubjectResolver {
     getAllSubjects() {
         return __awaiter(this, void 0, void 0, function* () {
-            const subjects = yield prisma.subject.findMany();
-            return subjects;
+            return yield prisma.subject.findMany();
         });
     }
     createSubject(input) {
@@ -57,27 +56,26 @@ let SubjectResolver = class SubjectResolver {
     }
     subjectsForParticularModule(moduleName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const subjects = yield prisma.subject.findMany({
+            return yield prisma.subject.findMany({
                 where: {
                     modul: {
                         moduleName,
                     },
                 },
             });
-            return subjects;
         });
     }
     studentsSubjects({ req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const student = yield prisma.student.findUnique({
                 where: {
-                    id: req.session.studentID
-                }
+                    id: req.session.studentID,
+                },
             });
             const subjects = yield prisma.subject.findMany({
                 where: {
-                    modulID: student === null || student === void 0 ? void 0 : student.modulID
-                }
+                    modulID: student === null || student === void 0 ? void 0 : student.modulID,
+                },
             });
             if (!subjects) {
                 throw new Error("ER501");

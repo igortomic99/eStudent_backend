@@ -30,8 +30,7 @@ const prisma = new client_1.PrismaClient();
 let ClassResolver = class ClassResolver {
     getAllClasses() {
         return __awaiter(this, void 0, void 0, function* () {
-            const classes = yield prisma.class.findMany();
-            return classes;
+            return yield prisma.class.findMany();
         });
     }
     createClass(input) {
@@ -46,6 +45,7 @@ let ClassResolver = class ClassResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("add err code bro");
             }
             return classa;
         });

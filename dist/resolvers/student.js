@@ -34,7 +34,7 @@ const StudentInput_1 = require("../types/inputs/StudentInput");
 const Student_1 = require("../types/Student");
 const prisma = new client_1.PrismaClient();
 let StudentResolver = class StudentResolver {
-    getAll() {
+    allStudents() {
         return __awaiter(this, void 0, void 0, function* () {
             const students = yield prisma.student.findMany();
             return students;
@@ -93,9 +93,9 @@ let StudentResolver = class StudentResolver {
     }
     registerExam(examID, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            let regexa;
+            let registeredExam;
             try {
-                regexa = yield prisma.examRecord.create({
+                registeredExam = yield prisma.examRecord.create({
                     data: {
                         studentID: req.session.studentID,
                         singed: true,
@@ -189,13 +189,11 @@ let StudentResolver = class StudentResolver {
     }
     me({ req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const studentID = req.session.studentID;
-            const student = yield prisma.student.findUnique({
+            return yield prisma.student.findUnique({
                 where: {
-                    id: studentID,
+                    id: req.session.studentID
                 },
             });
-            return student;
         });
     }
     studentsForModul(moduleName) {
@@ -298,7 +296,7 @@ let StudentResolver = class StudentResolver {
     }
     deregisterExam(examID, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            let regexa;
+            let registeredExam;
             const result = yield prisma.examRecord.findFirst({
                 where: {
                     examID,
@@ -309,7 +307,7 @@ let StudentResolver = class StudentResolver {
                 throw new Error("ER401");
             }
             try {
-                regexa = yield prisma.examRecord.delete({
+                registeredExam = yield prisma.examRecord.delete({
                     where: {
                         id: result === null || result === void 0 ? void 0 : result.id,
                     },
@@ -329,7 +327,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], StudentResolver.prototype, "getAll", null);
+], StudentResolver.prototype, "allStudents", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Student_1.Student),
     __param(0, (0, type_graphql_1.Arg)("input", () => StudentInput_1.StudentInput)),

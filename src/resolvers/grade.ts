@@ -8,13 +8,14 @@ const prisma = new PrismaClient();
 @Resolver(Grade)
 export class GradeResolver {
   @Query(() => [Grade])
-  async getAllGrades() {
-    const grades = await prisma.grade.findMany();
-    return grades;
+  async getAllGrades(): Promise<Grade[] | null> {
+    return await prisma.grade.findMany();
   }
 
   @Mutation(() => Grade)
-  async createGrade(@Arg("input", () => GradeInput) input: GradeInput) {
+  async createGrade(
+    @Arg("input", () => GradeInput) input: GradeInput
+  ): Promise<Grade | null> {
     let grade;
     try {
       grade = await prisma.grade.create({
@@ -23,7 +24,9 @@ export class GradeResolver {
         },
       });
     } catch (err) {
+      ///ADD ERR codes bro
       console.log(err.message);
+      throw new Error(" add err codes bro");
     }
     return grade;
   }

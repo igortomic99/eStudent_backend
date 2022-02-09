@@ -33,15 +33,14 @@ const prisma = new client_1.PrismaClient();
 let ExaminationPeriodResolver = class ExaminationPeriodResolver {
     getAllEXP() {
         return __awaiter(this, void 0, void 0, function* () {
-            const grades = yield prisma.examinationPeriod.findMany();
-            return grades;
+            return yield prisma.examinationPeriod.findMany();
         });
     }
-    createEXP(input) {
+    createExaminationPeriod(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            let exPeriod;
+            let examinationPeriod;
             try {
-                exPeriod = yield prisma.examinationPeriod.create({
+                examinationPeriod = yield prisma.examinationPeriod.create({
                     data: {
                         name: input.name,
                         beginningDate: input.beginningDate,
@@ -52,8 +51,9 @@ let ExaminationPeriodResolver = class ExaminationPeriodResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("add err codes bro");
             }
-            return exPeriod;
+            return examinationPeriod;
         });
     }
     examsFromExaminationPeriod({ req }) {
@@ -84,8 +84,8 @@ let ExaminationPeriodResolver = class ExaminationPeriodResolver {
                                 select: {
                                     id: true,
                                     studentID: true,
-                                    singed: true
-                                }
+                                    singed: true,
+                                },
                             },
                             subject: {
                                 select: {
@@ -95,18 +95,18 @@ let ExaminationPeriodResolver = class ExaminationPeriodResolver {
                                     professor: {
                                         select: {
                                             firstName: true,
-                                            lastName: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                            lastName: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                     id: true,
                     name: true,
                     beginningDate: true,
                     endDate: true,
-                }
+                },
             });
             if (!examinationPeriod) {
                 throw new Error("There are no examination periods currently");
@@ -128,6 +128,7 @@ let ExaminationPeriodResolver = class ExaminationPeriodResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("ADD err codes brah");
             }
             return exam;
         });
@@ -145,7 +146,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [ExaminationPeriodInput_1.ExaminationPeriodInput]),
     __metadata("design:returntype", Promise)
-], ExaminationPeriodResolver.prototype, "createEXP", null);
+], ExaminationPeriodResolver.prototype, "createExaminationPeriod", null);
 __decorate([
     (0, type_graphql_1.Query)(() => ExaminationPeriod_1.ExaminationPeriod),
     (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),

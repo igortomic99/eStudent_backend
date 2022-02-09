@@ -1,37 +1,34 @@
 import { PrismaClient } from ".prisma/client";
-import { ProfessorInput } from "../types/inputs/ProfessorInput";
-import { Professor } from "../types/Professor";
-import {
-  Query,
-  Mutation,
-  Arg,
-  Resolver,
-  Float,
-  Ctx,
-  UseMiddleware,
-} from "type-graphql";
 import argon2 from "argon2";
+import {
+  Arg,
+  Ctx,
+  Float,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware
+} from "type-graphql";
 import { MyContext } from "../context";
 import { isAuthP } from "../middleware/isAuthP";
 import { Exam } from "../types/Exam";
-import { ExaminationPeriod } from "../types/ExaminationPeriod";
-import { Subject } from "../types/Subject";
 import { ExamRecord } from "../types/ExamRecord";
+import { ProfessorInput } from "../types/inputs/ProfessorInput";
+import { Professor } from "../types/Professor";
 
 const prisma = new PrismaClient();
 
 @Resolver(Professor)
 export class ProfessorResolver {
   @Query(() => [Professor])
-  async getAllProfessors() {
-    const professors = await prisma.professor.findMany();
-    return professors;
+  async getAllProfessors(): Promise<Professor[] | null> {
+    return await prisma.professor.findMany();
   }
 
   @Mutation(() => Professor)
   async createProfessor(
     @Arg("input", () => ProfessorInput) input: ProfessorInput
-  ) {
+  ): Promise<Professor | null> {
     let professor;
     const hashedPassword = await argon2.hash(input.password);
     try {
@@ -45,7 +42,9 @@ export class ProfessorResolver {
         },
       });
     } catch (err) {
+      ///ADD ERRRR CODESS BRAH
       console.log(err.message);
+      throw new Error("ObRaDi ErRor");
     }
     return professor;
   }
@@ -54,7 +53,8 @@ export class ProfessorResolver {
   async registerPassedExam(
     @Arg("id", () => String) id: string,
     @Arg("points", () => Float) points: number
-  ) {
+  ): Promise<Boolean> {
+    ///Finding grade based on value
     let grade = await prisma.grade.findFirst({
       where: {
         value: 5,
@@ -92,24 +92,21 @@ export class ProfessorResolver {
       });
     }
     if (!grade) {
+      ////ADD err codes brah
       throw new Error("Grades are not added into table");
     }
     const exam = await prisma.examRecord.update({
-      where:{
+      where: {
         id,
       },
-      data:{
-        gradeID:grade.id,
-        singed:false,
-        passed:true,
-        points
-      }
+      data: {
+        gradeID: grade.id,
+        singed: false,
+        passed: true,
+        points,
+      },
     });
-    // const result = await prisma.exam.update({
-    //   where:{
-
-    //   }
-    // })
+    ///Add err codes brah
     if (exam) {
       return true;
     }
@@ -121,40 +118,42 @@ export class ProfessorResolver {
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
-  ) {
+  ): Promise<Professor | null> {
+
+    ///Finding professor based on unique field
     const professor = await prisma.professor.findUnique({
       where: {
         email,
       },
     });
-
+    ///ADD ERRRR CODESS BRAH
     if (!professor) {
       throw new Error("There is no such professor");
     }
-
+    ///Verify
     const valid = await argon2.verify(professor.password, password);
     if (!valid) {
       throw new Error("Wrong credentials");
     }
+    ///Add professorId in session
     req.session!.professorID = professor.id;
     return professor;
   }
 
   @Query(() => Professor)
   @UseMiddleware(isAuthP)
-  async meProfessor(@Ctx() { req }: MyContext) {
-    const professorID = req.session.professorID;
-    const professor = await prisma.professor.findUnique({
+  async meProfessor(@Ctx() { req }: MyContext): Promise<Professor | null> {
+    return await prisma.professor.findUnique({
       where: {
-        id: professorID,
+        id: req.session.professorID,
       },
     });
-    return professor;
   }
 
   @Query(() => [Exam])
   @UseMiddleware(isAuthP)
   async examsFromCurrentExamPeriod(@Ctx() { req }: MyContext) {
+    ///Getting Exams from current examination period
     const dt = Date.now();
     const date = new Date(dt);
     const exams = await prisma.exam.findMany({
@@ -172,7 +171,7 @@ export class ProfessorResolver {
         date: true,
         subject: {
           select: {
-            id:true,
+            id: true,
             espp: true,
             subjectName: true,
             type: true,
@@ -200,30 +199,30 @@ export class ProfessorResolver {
     @Ctx() { req }: MyContext,
     @Arg("subjectID", () => String) subjectID: string
   ) {
+    ///Students who singed particular exam
     const dt = Date.now();
     const date = new Date(dt);
-    const students = await prisma.examRecord.findMany({
-      where:{
-        exam:{
-          subject:{
-            id:subjectID,
-            professorID:req.session.professorID,
+    return await prisma.examRecord.findMany({
+      where: {
+        exam: {
+          subject: {
+            id: subjectID,
+            professorID: req.session.professorID,
           },
-          date:{
-            gte: date
-          }
+          date: {
+            gte: date,
+          },
         },
-        singed:true,
+        singed: true,
       },
-      include:{
-        exam:{
-          include:{
-            subject:true
-          }
+      include: {
+        exam: {
+          include: {
+            subject: true,
+          },
         },
-        student:true
-      }
-    })
-    return students;
+        student: true,
+      },
+    });
   }
 }

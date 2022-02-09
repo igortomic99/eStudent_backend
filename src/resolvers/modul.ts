@@ -9,36 +9,38 @@ const prisma = new PrismaClient();
 @Resolver(Modul)
 export class ModulResolver {
   @Query(() => [Modul])
-  async getAllModuls() {
-    const modules = await prisma.exam.findMany();
-    return modules;
+  async getAllModuls(): Promise<Modul[] | null> {
+    return await prisma.modul.findMany();
   }
 
   @Mutation(() => Modul)
-  async createModul(@Arg("input", () => ModulInput) input: ModulInput) {
+  async createModul(
+    @Arg("input", () => ModulInput) input: ModulInput
+  ): Promise<Modul | null> {
     let modul;
     try {
       modul = await prisma.modul.create({
         data: {
-            moduleCode:input.moduleCode,
-            moduleName:input.moduleName,
+          moduleCode: input.moduleCode,
+          moduleName: input.moduleName,
         },
       });
     } catch (err) {
+      ///ADD ERR CODEs BRO
       console.log(err.message);
+      throw new Error("Add err codes bro");
     }
     return modul;
   }
 
-  @Query(()=> [Subject])
-  async moduleSubjects(
+  @Query(() => [Subject])
+  async modulSubjects(
     @Arg("id", () => String) id: string
-  ){
-    const subjects = await prisma.subject.findMany({
-      where:{
-        modulID:id
-      }
-    })
-    return subjects;
+  ): Promise<Subject[] | null> {
+    return await prisma.subject.findMany({
+      where: {
+        modulID: id,
+      },
+    });
   }
 }

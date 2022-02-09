@@ -26,19 +26,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfessorResolver = void 0;
 const client_1 = require(".prisma/client");
-const ProfessorInput_1 = require("../types/inputs/ProfessorInput");
-const Professor_1 = require("../types/Professor");
-const type_graphql_1 = require("type-graphql");
 const argon2_1 = __importDefault(require("argon2"));
+const type_graphql_1 = require("type-graphql");
 const isAuthP_1 = require("../middleware/isAuthP");
 const Exam_1 = require("../types/Exam");
 const ExamRecord_1 = require("../types/ExamRecord");
+const ProfessorInput_1 = require("../types/inputs/ProfessorInput");
+const Professor_1 = require("../types/Professor");
 const prisma = new client_1.PrismaClient();
 let ProfessorResolver = class ProfessorResolver {
     getAllProfessors() {
         return __awaiter(this, void 0, void 0, function* () {
-            const professors = yield prisma.professor.findMany();
-            return professors;
+            return yield prisma.professor.findMany();
         });
     }
     createProfessor(input) {
@@ -58,6 +57,7 @@ let ProfessorResolver = class ProfessorResolver {
             }
             catch (err) {
                 console.log(err.message);
+                throw new Error("ObRaDi ErRor");
             }
             return professor;
         });
@@ -115,8 +115,8 @@ let ProfessorResolver = class ProfessorResolver {
                     gradeID: grade.id,
                     singed: false,
                     passed: true,
-                    points
-                }
+                    points,
+                },
             });
             if (exam) {
                 return true;
@@ -144,13 +144,11 @@ let ProfessorResolver = class ProfessorResolver {
     }
     meProfessor({ req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const professorID = req.session.professorID;
-            const professor = yield prisma.professor.findUnique({
+            return yield prisma.professor.findUnique({
                 where: {
-                    id: professorID,
+                    id: req.session.professorID,
                 },
             });
-            return professor;
         });
     }
     examsFromCurrentExamPeriod({ req }) {
@@ -198,7 +196,7 @@ let ProfessorResolver = class ProfessorResolver {
         return __awaiter(this, void 0, void 0, function* () {
             const dt = Date.now();
             const date = new Date(dt);
-            const students = yield prisma.examRecord.findMany({
+            return yield prisma.examRecord.findMany({
                 where: {
                     exam: {
                         subject: {
@@ -206,21 +204,20 @@ let ProfessorResolver = class ProfessorResolver {
                             professorID: req.session.professorID,
                         },
                         date: {
-                            gte: date
-                        }
+                            gte: date,
+                        },
                     },
                     singed: true,
                 },
                 include: {
                     exam: {
                         include: {
-                            subject: true
-                        }
+                            subject: true,
+                        },
                     },
-                    student: true
-                }
+                    student: true,
+                },
             });
-            return students;
         });
     }
 };

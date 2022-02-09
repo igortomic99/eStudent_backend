@@ -44,7 +44,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             exam_1.ExamResolver,
             modul_1.ModulResolver,
             class_1.ClassResolver,
-            examinationPeriod_1.ExaminationPeriodResolver
+            examinationPeriod_1.ExaminationPeriodResolver,
         ],
         validate: false,
     });

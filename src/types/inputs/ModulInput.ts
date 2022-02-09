@@ -1,4 +1,3 @@
-import { Class } from "@prisma/client";
 import { InputType, Field } from "type-graphql";
 
 @InputType()

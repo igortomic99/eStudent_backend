@@ -9,8 +9,7 @@ const prisma = new PrismaClient();
 export class ClassResolver {
   @Query(() => [Class])
   async getAllClasses() {
-    const classes = await prisma.class.findMany();
-    return classes;
+    return await prisma.class.findMany();
   }
 
   @Mutation(() => Class)
@@ -19,11 +18,13 @@ export class ClassResolver {
     try {
       classa = await prisma.class.create({
         data: {
-            classLabel:input.classLabel,
+          classLabel: input.classLabel,
         },
       });
     } catch (err) {
+      ///Add err codes bro
       console.log(err.message);
+      throw new Error("add err code bro");
     }
     return classa;
   }

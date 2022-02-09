@@ -1,7 +1,6 @@
 import { Class } from "@prisma/client";
 import { Field, ObjectType } from "type-graphql";
 import { Role } from "./enums/Role";
-import { Exam } from "./Exam";
 import { ExamRecord } from "./ExamRecord";
 import { Modul } from "./Modul";
 
